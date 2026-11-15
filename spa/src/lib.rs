@@ -1,6 +1,6 @@
 //! NOTE: I'm assuming native endianness throughout
 use bytes::BufMut;
-pub use spa_macros::Pod;
+pub use spa_macros::PodStruct;
 use std::ffi::CStr;
 use thiserror::Error;
 

@@ -17,7 +17,7 @@ use crate::{
     codec::{PwCodec, PwFrame},
     messages::{
         client::UpdateProperties,
-        core::{Hello, Sync},
+        core::{Event, Hello, Sync},
     },
 };
 
@@ -34,14 +34,19 @@ const DEFAULT_SOCKET_NAME: &str = "pipewire-0";
 pub struct Pipewire {
     conn: Framed<UnixStream, PwCodec>,
     /// Seq number of next message
-    seq: AtomicU32,
+    seq: u32,
+    /// Allocator for local proxy IDs for resources on the server.
+    ///
+    /// Starts at 2 because 0 = core and 1 = us (the client).
+    next_proxy_id: u32,
 }
 
 impl Pipewire {
     fn new(conn: Framed<UnixStream, PwCodec>) -> Self {
         Self {
             conn,
-            seq: AtomicU32::new(0),
+            seq: 0,
+            next_proxy_id: 2,
         }
     }
     pub async fn connect() -> Result<Self> {
@@ -83,15 +88,21 @@ impl Pipewire {
         while let Some(msg) = self.conn.next().await {
             let msg = msg?;
             if let Some(core_event) = msg.try_decode_core().unwrap() {
-                dbg!(core_event);
+                debug!(event = ?core_event, "decoded event");
+                if let Event::Done(done) = core_event {
+                    if done.id == 0 && done.seq == seq as i32 {
+                        break;
+                    }
+                }
             }
         }
         Ok(())
     }
 
-    fn next_seq(&self) -> u32 {
-        // TODO It's probably OK for this to be less stringent
-        self.seq.fetch_add(1, Ordering::SeqCst)
+    fn next_seq(&mut self) -> u32 {
+        let val = self.seq;
+        self.seq += 1;
+        val
     }
 }
 
