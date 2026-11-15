@@ -1,0 +1,17 @@
+[package]
+name = "pipewire"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+spa = { path = "../spa" }
+bytes.workspace = true
+anyhow.workspace = true
+tokio = { workspace = true, features = ["full"] }
+futures.workspace = true
+tracing.workspace = true
+tokio-util = { version = "0.7.20", features = ["codec"] }
+
+[dev-dependencies]
+tracing-subscriber.workspace = true

@@ -1,0 +1,10 @@
+[package]
+name = "spa"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+bytes.workspace = true
+spa-macros = { path = "../spa-macros" }
+thiserror = "2.0.21"
