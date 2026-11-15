@@ -24,6 +24,11 @@ impl<'buf> PodBuf<'buf> {
         builder.inner.buf.put_i32_ne(value)
     }
 
+    pub fn put_long(&mut self, value: i64) {
+        let builder = PodBuilder::new(self, PodType::Long);
+        builder.inner.buf.put_i64_ne(value)
+    }
+
     pub fn put_string(&mut self, value: impl AsRef<[u8]>) {
         let value = value.as_ref();
         assert!(

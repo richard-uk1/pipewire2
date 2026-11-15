@@ -5,7 +5,7 @@ use std::ffi::CStr;
 use thiserror::Error;
 
 mod pod;
-pub use pod::{DecodePod, DecodePodError, EncodePod, PodBuf, PodDecoder};
+pub use pod::{DecodePod, DecodePodError, EncodePod, PodBuf, PodDecoder, Props};
 
 pub mod spa_type;
 

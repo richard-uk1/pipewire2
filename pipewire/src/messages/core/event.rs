@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use spa::{DecodePod, DecodePodError, PodDecoder, PodStruct};
+use spa::{DecodePod, DecodePodError, PodDecoder, PodStruct, Props};
 
 use crate::{codec::PwFrame, messages::core::DecodeError};
 
@@ -69,7 +69,7 @@ impl Event {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PodStruct)]
 pub struct Info {
     pub id: i32,
     pub cookie: i32,
@@ -78,37 +78,7 @@ pub struct Info {
     pub version: String,
     pub name: String,
     pub change_mask: i64,
-    pub props: BTreeMap<String, String>,
-}
-
-impl DecodePod for Info {
-    fn decode(src: &mut bytes::Bytes) -> Result<Self, DecodePodError> {
-        src.decode_struct(|src| {
-            let id = src.decode_int()?;
-            let cookie = src.decode_int()?;
-            let user_name = src.decode_string()?;
-            let host_name = src.decode_string()?;
-            let version = src.decode_string()?;
-            let name = src.decode_string()?;
-            let change_mask = src.decode_long()?;
-            let props = src.decode_struct(|src| {
-                let n_items = src.decode_int()?;
-                (0..n_items)
-                    .map(|_| Ok((src.decode_string()?, src.decode_string()?)))
-                    .collect::<Result<_, DecodePodError>>()
-            })?;
-            Ok(Self {
-                id,
-                cookie,
-                user_name,
-                host_name,
-                version,
-                name,
-                change_mask,
-                props,
-            })
-        })
-    }
+    pub props: Props,
 }
 
 #[derive(Debug, PodStruct)]

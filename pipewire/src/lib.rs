@@ -1,20 +1,14 @@
-use std::{
-    collections::BTreeMap,
-    env, fmt, io,
-    path::PathBuf,
-    sync::atomic::{AtomicU32, Ordering},
-};
+use std::{collections::BTreeMap, env, fmt, io, path::PathBuf};
 
 use anyhow::{Context, Result, anyhow};
-use bytes::BytesMut;
-use futures::{SinkExt, StreamExt, channel::oneshot};
-use spa::{EncodePod, PodBuf};
+use futures::{SinkExt, StreamExt};
+use spa::EncodePod;
 use tokio::net::UnixStream;
 use tokio_util::codec::Framed;
 use tracing::{debug, info};
 
 use crate::{
-    codec::{PwCodec, PwFrame},
+    codec::PwCodec,
     messages::{
         client::UpdateProperties,
         core::{Event, Hello, Sync},
@@ -23,7 +17,7 @@ use crate::{
 
 mod codec;
 
-mod messages;
+pub mod messages;
 
 #[cfg(target_pointer_width = "16")]
 compile_error!("expect at least 32-bit width pointers");
@@ -39,6 +33,8 @@ pub struct Pipewire {
     ///
     /// Starts at 2 because 0 = core and 1 = us (the client).
     next_proxy_id: u32,
+    // TODO if we keep a stash of oneshots to send responses, store them in a heap so we can
+    // discard older ones/reply to them since a higher seq always comes after a lower one.
 }
 
 impl Pipewire {

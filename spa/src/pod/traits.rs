@@ -13,6 +13,12 @@ impl EncodePod for i32 {
     }
 }
 
+impl EncodePod for i64 {
+    fn encode(&self, dst: &mut PodBuf) {
+        dst.put_long(*self)
+    }
+}
+
 impl EncodePod for String {
     fn encode(&self, dst: &mut PodBuf) {
         dst.put_string(self);
@@ -28,6 +34,12 @@ pub trait DecodePod: Sized {
 impl DecodePod for i32 {
     fn decode(src: &mut Bytes) -> Result<Self, DecodePodError> {
         src.decode_int()
+    }
+}
+
+impl DecodePod for i64 {
+    fn decode(src: &mut Bytes) -> Result<Self, DecodePodError> {
+        src.decode_long()
     }
 }
 

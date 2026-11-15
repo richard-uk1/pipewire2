@@ -47,3 +47,46 @@ pub struct Pong {
     id: i32,
     seq: i32,
 }
+
+impl PwMethod for Pong {
+    fn id(&self) -> u32 {
+        0
+    }
+    fn opcode(&self) -> u8 {
+        3
+    }
+}
+
+/// Core::Error (Opcode 4)
+#[derive(Debug, PodStruct)]
+pub struct Error {
+    id: i32,
+    seq: i32,
+    res: i32,
+    message: String,
+}
+
+impl PwMethod for Error {
+    fn id(&self) -> u32 {
+        0
+    }
+    fn opcode(&self) -> u8 {
+        4
+    }
+}
+
+/// Core::GetRegistry (Opcode 5)
+#[derive(Debug, PodStruct)]
+pub struct GetRegistry {
+    version: i32,
+    new_id: i32,
+}
+
+impl PwMethod for GetRegistry {
+    fn id(&self) -> u32 {
+        0
+    }
+    fn opcode(&self) -> u8 {
+        5
+    }
+}

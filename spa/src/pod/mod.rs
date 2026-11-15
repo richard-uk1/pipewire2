@@ -7,6 +7,9 @@ pub use pod_type::PodType;
 mod decoder;
 pub use decoder::{DecodePodError, PodDecoder};
 
+mod props;
+pub use props::Props;
+
 mod traits;
 pub use traits::{DecodePod, EncodePod};
 
